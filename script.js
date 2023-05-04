@@ -2,13 +2,13 @@ const liste = ["AMELIE","ETIENNE","CAMILLE"];
 var erreurs = 0;
 var mot = "";
 var motActuel=[];
-const penduOrdre = ["#base" , "#barreVerti","#barreHori","#corde","#tete","#corps","#brasDroit","#brasGauche","#jambeDroite","#jambeGauche"];
+const penduOrdre = ["#base" , "#barreVerti","#barreHori","#barreCote","#corde","#tete","#corps","#brasDroit","#brasGauche","#jambeDroite","#jambeGauche"];
 let enJeu = true;
 let lettreUtilise=[];
 
 document.getElementById("boutton").addEventListener("click",newGame);
 
-function newGame(){
+async function newGame(){
     //Remettre tout a 0 
     document.querySelector(".modal-wrapper").style.display = "none";
     document.querySelector(".modal-wrapper-lose").style.display = "none";
@@ -19,12 +19,16 @@ function newGame(){
 
     lettreUtilise=[];
     mot = "";
-    motActuel=[];
+    //motActuel=["A","t","t","e","n","d","e","z"," ","v","o","t","r","e"," ","p","r","o","c","h","a","i","n"," ","m","o","t"];
+    motActuel = [];
+
+    document.querySelector("#mot").textContent = "Veuillez patientez svp";
+    //document.querySelector("#mot").textContent = motActuel.join("");
     erreurs = 0;
     enJeu = true;
-    for (let part of penduOrdre){
+    /*for (let part of penduOrdre){
         document.querySelector(part).style.display="none";
-    }
+    }*/
 
     for (let i = 0 ; i <=25 ; i++){
         document.querySelector("#"+String.fromCharCode(65+i)).classList.remove("bon");
@@ -33,6 +37,10 @@ function newGame(){
 
     // Fin de la remise à 0
 
+    //rep = await serve();
+    //mot = rep.toUpperCase();
+    //console.log(mot);
+    
 
     let idList = ["pendu","centre","lettres","reset"];
     for(let id of idList) {
@@ -42,7 +50,12 @@ function newGame(){
     document.querySelector("#clavier").style.display="grid";
     document.querySelector("#reset").style.display="block";
 
-    mot = liste[Math.floor(Math.random()*liste.length)];
+    //mot = liste[Math.floor(Math.random()*liste.length)];
+    
+    rep = await serve();
+    mot = rep.toUpperCase();
+    console.log(mot);
+    
     motActuel.push(mot.charAt(0));
     var i =1;
     while (i<mot.length-1){
@@ -53,6 +66,8 @@ function newGame(){
     document.querySelector("#mot").textContent = "Mot à découvrir : "+motActuel.join("");
 
     document.querySelector(".lettre").style.color = "black";
+
+    
 }
 
 
@@ -113,6 +128,7 @@ function gameplay(lettre){
                 document.querySelector("#"+lettre).classList.add("mauvais") ;  
                 document.querySelector("#"+lettre).style.color = "rgb(54, 54, 54)";
                 document.querySelector(penduOrdre[erreurs]).style.display = "block";
+                document.querySelector(penduOrdre[erreurs]).style.stroke = "white";
                 erreurs++;
             }
 
@@ -122,3 +138,16 @@ function gameplay(lettre){
 }
 
 
+function serve(){
+    return fetch("http://15.237.156.219/getWord")
+    .then(async function(response) {
+        if (response.ok){
+            const rep = await response.text();
+            console.log(rep);
+            return rep;
+        }
+        else{
+            return serve();
+        }
+    })
+}
