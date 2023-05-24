@@ -2,7 +2,8 @@
 <html lang="fr">
     <head>
         <title>Pendu</title>
-        <link rel="stylesheet" href="style.css">
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="style.css" >
     </head>
     <body>
         <h1>Le jeu du pendu</h1>
@@ -11,31 +12,18 @@
         </div>
         <aside id="pendu" class="notDisplayed">
             <svg id ="pendudevant" width="310" height="400">
-                <line id = "base" class = "pendu" x1="0" y1="400" x2="100" y2="400" stroke="grey" stroke-width="8"/>
-                <line id = "barreVerti" class = "pendu" x1="50" y1="400" x2="50" y2="4" stroke="grey" stroke-width="4"/>
-                <line id = "barreHori" class = "pendu" x1="30" y1="4" x2="280" y2="4" stroke="grey" stroke-width="4"/>
-                <line id = "barreCote" class = "pendu" x1="50" y1="60" x2="120" y2="4" stroke="grey" stroke-width="4"/>
-                <line id = "corde" class = "pendu" x1="250" y1="4" x2="250" y2="50" stroke="grey" stroke-width="4"/>
-                <circle id = "tete" class = "pendu" cx="250" cy="80" r="30" stroke="grey" stroke-width="4" fill="none" />
-                <line id = "corps" class = "pendu" x1="250" y1="108" x2="250" y2="240" stroke="grey" stroke-width="4"/>
-                <line id = "brasGauche" class = "pendu" x1="250" y1="125" x2="190" y2="200" stroke="grey" stroke-width="4"/>
-                <line id = "brasDroit" class = "pendu" x1="250" y1="125" x2="310" y2="200" stroke="grey" stroke-width="4"/>
-                <line id = "jambeGauche" class = "pendu" x1="250" y1="240" x2="190" y2="330" stroke="grey" stroke-width="4"/>
                 <line id = "jambeDroite" class = "pendu" x1="250" y1="240" x2="310" y2="330" stroke="grey" stroke-width="4"/>
+                <line id = "jambeGauche" class = "pendu" x1="250" y1="240" x2="190" y2="330" stroke="grey" stroke-width="4"/>
+                <line id = "brasDroit" class = "pendu" x1="250" y1="125" x2="310" y2="200" stroke="grey" stroke-width="4"/>
+                <line id = "brasGauche" class = "pendu" x1="250" y1="125" x2="190" y2="200" stroke="grey" stroke-width="4"/>
+                <line id = "corps" class = "pendu" x1="250" y1="108" x2="250" y2="240" stroke="grey" stroke-width="4"/>
+                <circle id = "tete" class = "pendu" cx="250" cy="80" r="30" stroke="grey" stroke-width="4" fill="none" />
+                <line id = "corde" class = "pendu" x1="250" y1="4" x2="250" y2="50" stroke="grey" stroke-width="4"/>
+                <line id = "barreCote" class = "pendu" x1="50" y1="60" x2="120" y2="4" stroke="grey" stroke-width="4"/>
+                <line id = "barreHori" class = "pendu" x1="30" y1="4" x2="280" y2="4" stroke="grey" stroke-width="4"/>
+                <line id = "barreVerti" class = "pendu" x1="50" y1="400" x2="50" y2="4" stroke="grey" stroke-width="4"/>
+                <line id = "base" class = "pendu" x1="0" y1="400" x2="100" y2="400" stroke="grey" stroke-width="8"/>
             </svg>
-            <!--svg id = "pendufond" width="310" height="400">
-                <line class = "pendufond" x1="0" y1="400" x2="100" y2="400" stroke="grey" stroke-width="8"/>
-                <line class = "pendufond" x1="50" y1="400" x2="50" y2="4" stroke="grey" stroke-width="4"/>
-                <line class = "pendufond" x1="30" y1="4" x2="280" y2="4" stroke="grey" stroke-width="4"/>
-                <line class = "pendufond" x1="50" y1="60" x2="120" y2="4" stroke="grey" stroke-width="4"/>
-                <line class = "pendufond" x1="250" y1="4" x2="250" y2="50" stroke="grey" stroke-width="4"/>
-                <circle class = "pendufond" cx="250" cy="80" r="30" stroke="grey" stroke-width="4" fill="none" />
-                <line class = "pendufond" x1="250" y1="108" x2="250" y2="240" stroke="grey" stroke-width="4"/>
-                <line class = "pendufond" x1="250" y1="125" x2="190" y2="200" stroke="grey" stroke-width="4"/>
-                <line class = "pendufond" x1="250" y1="125" x2="310" y2="200" stroke="grey" stroke-width="4"/>
-                <line class = "pendufond" x1="250" y1="240" x2="190" y2="330" stroke="grey" stroke-width="4"/>
-                <line class = "pendufond" x1="250" y1="240" x2="310" y2="330" stroke="grey" stroke-width="4"/>
-            </svg-->
         </aside>
         <main id="centre" class="notDisplayed">
             <h2 id = "mot">Le mot à chercher</p>
