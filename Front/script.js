@@ -15,7 +15,7 @@ for (let i = 0 ; i <=25 ; i++){
     document.querySelector("#"+String.fromCharCode(65+i)).addEventListener("click",() => gameplay(String.fromCharCode(65+i)));
 }
 document.addEventListener('keyup', (event) => {
-        console.log(event.key.toUpperCase());
+        //console.log(event.key.toUpperCase());
         gameplay(event.key.toUpperCase());
 })
 document.querySelector("#resetbtn").addEventListener("click",newGame);
@@ -59,28 +59,31 @@ async function newGame(){
     // -------------------------------------------
 
     // -------- Mot généré avec le serveur --------
-    rep = await serve();
-    mot = rep.toUpperCase();
-    console.log(mot);
+    rep = await serve();  // lance api/newGame
+    //taillemot = rep.toUpperCase();
+    //console.log(mot);
     enJeu=true; //Commencer à jouer quand quand le mot est affiché
     
-    motActuel.push(mot.charAt(0));
-    var i =1;
-    while (i<mot.length-1){
+    var i =0;
+    while (i<rep){
         motActuel.push("_");
         i++;
     }
-    motActuel.push(mot.charAt(mot.length-1));
     document.querySelector("#mot").textContent = "Mot à découvrir : "+motActuel.join("");
 
 }
 
 
 
-function gameplay(lettre){
+async function gameplay(lettre){
     // Si on est pas en Jeu (mot en train de charger ou dans un page de fin) rien ne se passe
+    //console.log("la lettre Evenetlist :",lettre);
+    rep = await serveTesterLettre(lettre);
+    dico = JSON.parse(rep);
+    //console.log(dico['lettreUtilise']);
+
     if (enJeu){
-        if (lettreUtilise.includes(lettre)){ //Affiche une page "lettre déjà utilisée" ,attend d'avoir appuyé sur "Compris" pour continuer
+        if (dico['lettreUtilise']){ //Affiche une page "lettre déjà utilisée" ,attend d'avoir appuyé sur "Compris" pour continuer
             enJeu=false;  
             document.querySelector(".modal-wrapper-used").style.display = "block";
             document.querySelector("#ok").addEventListener("click",function(){
@@ -88,28 +91,23 @@ function gameplay(lettre){
                 enJeu=true;
             });
         }
-        else if (mot.includes(lettre)){ //Le mot contient la lettre sélectionner
-            for(let i =1 ; i<mot.length-1;i++){
-                if (mot[i]==lettre){
-                    motActuel[i]=lettre;
-                    document.querySelector("#mot").textContent = "Mot à découvrir : "+motActuel.join(""); //on actualise le mot avec la lettre affiché
-                    if (!motActuel.includes("_")){ // Jeu fini proposition de rejouer
-                        document.querySelector(".modal-wrapper").style.display = "block";
-                        document.querySelector(".yes").addEventListener("click",newGame);
-                        document.querySelector(".no").addEventListener("click",function(){
-                            document.querySelector(".modal-wrapper").style.display = "none";
-                            enJeu=false;
-                        });
-                        
-                    }
-                }
-            }
+        else if (dico['lettreBien']){ //Le mot contient la lettre sélectionner
+            document.querySelector("#mot").textContent = "Mot à découvrir : "+dico['motActuel'].join(""); //on actualise le mot avec la lettre affiché
             document.querySelector("#"+lettre).classList.add("bon") ; //affiché en vert
+            if(dico['gagner']){
+                 // Jeu fini proposition de rejouer
+                 document.querySelector(".modal-wrapper").style.display = "block";
+                 document.querySelector(".yes").addEventListener("click",newGame);
+                 document.querySelector(".no").addEventListener("click",function(){
+                     document.querySelector(".modal-wrapper").style.display = "none";
+                     enJeu=false;
+                 });
+            }
         }
         else{
-            if (erreurs >= penduOrdre.length){ //fin du jeu, perdu
+            if (dico['perdu']){ //fin du jeu, perdu 
                 document.querySelector(".modal-wrapper-lose").style.display = "block";
-                document.querySelector("#lastmsg").textContent = "Vous avez perdu, le mot que vous cherchiez est "+mot;
+                document.querySelector("#lastmsg").textContent = "Vous avez perdu, le mot que vous cherchiez est "+dico['motActuel'];
                 document.querySelector(".yes-lose").addEventListener("click",newGame);
                 document.querySelector(".no-lose").addEventListener("click",function(){
                     document.querySelector(".modal-wrapper-lose").style.display = "none";
@@ -125,17 +123,30 @@ function gameplay(lettre){
             }
 
         }
-        lettreUtilise.push(lettre);
     }
 }
 
 
 function serve(){ //appelle au server pour obtenir un mot
-    return fetch("http://localhost:8000/api/getWord")
+    return fetch("http://localhost:8000/api/newGame?minLetters=4&maxLetters=6")
     .then(async function(response) {
         if (response.ok){
             const rep = await response.text();
-            console.log(rep);
+            //console.log(rep);
+            return rep;
+        }
+        else{
+            return serve();
+        }
+    })
+}
+
+function serveTesterLettre(lettre){ //appelle au server pour obtenir un mot
+    return fetch("http://localhost:8000/api/testLetter?letter="+lettre)
+    .then(async function(response) {
+        if (response.ok){
+            const rep = await response.text();
+            //console.log(rep,"le JSON de la lettre");
             return rep;
         }
         else{
