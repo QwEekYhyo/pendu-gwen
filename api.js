@@ -37,9 +37,9 @@ let lettreDansLeMot = false;
 
 function manageRequest(request, response) {
     const etoile = request.url.split("?")[0].split("/")[2];
-    //const minLetters = request.url.split("?")[1].split("&")[0].split("=")[1];
-    //const maxLetters = request.url.split("?")[1].split("&")[1].split("=")[1];
     
+    /*
+    // Partie quand le min et max etait dans l'url :
     const parametres = request.url.split("?")[1].split("&");
     for(const argument of parametres){
         argumentCoupe = argument.split("=");
@@ -50,9 +50,28 @@ function manageRequest(request, response) {
         else if (argumentCoupe[0]=="maxLetters"){
             maxLetters=parseInt(argumentCoupe[1]);
         }
-    }
+    } */
     
     //console.log(minLetters,maxLetters);
+
+    const parametres = request.url.split("?")[1];
+    argumentCoupe = parametres.split("=");
+    if (argumentCoupe[0]=="level"){
+        if(argumentCoupe[1]=="Facile"){
+            minLetters=4;
+            maxLetters=6;
+        } 
+        if(argumentCoupe[1]=="Moyen"){
+            minLetters=6;
+            maxLetters=8;
+        }
+        if(argumentCoupe[1]=="Difficile"){
+            minLetters=8;
+            maxLetters=10;
+        }
+    }
+
+
     let listeFinale = [];
 
     if (minLetters>maxLetters){
@@ -131,7 +150,7 @@ function manageRequest(request, response) {
             lettreMauvaise = true;
         }
 
-        
+
         let dico = {motActuel : motEnCours, lettreUtilise : lettreMauvaise , lettreBien: lettreDansLeMot , gagner : victoire , perdu : defaite};
         response.end(JSON.stringify(dico));
 

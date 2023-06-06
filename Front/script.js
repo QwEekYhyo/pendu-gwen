@@ -5,12 +5,21 @@ var motActuel=[];  //Mot en cours (avec des lettres cacher)
 const penduOrdre = ["#base" , "#barreVerti","#barreHori","#barreCote","#corde","#tete","#corps","#brasDroit","#brasGauche","#jambeDroite","#jambeGauche"]; //ordre dans laqurl il faut affiché le pendu
 let enJeu = false;  //variable qui nous emepche de jouer si il n'y a pas de mot
 let lettreUtilise=[];  //lettre déjà utilisé (on a pas le droit de les reprendre)
+let level = "Facile";
 
 
 
 //------- Tout les event listner (il ne sont pas dans newGame sinon il se lancerais plusieurs fois)------------------
+select = document.getElementById("niveauDifficultes");
+select.addEventListener('change', function () {
+    level = select.value;
+})
 
-document.getElementById("boutton").addEventListener("click",newGame);
+document.getElementById("boutton").addEventListener("click",() => {
+    this.newGame();
+});
+
+
 for (let i = 0 ; i <=25 ; i++){
     document.querySelector("#"+String.fromCharCode(65+i)).addEventListener("click",() => gameplay(String.fromCharCode(65+i)));
 }
@@ -53,6 +62,8 @@ async function newGame(){
         document.getElementById(id).classList.remove("notDisplayed")
     } 
     document.getElementById("boutton").style.display="none";
+    document.getElementById("difficulty").style.display="none";
+    document.getElementById("msgLevel").innerHTML = "Niveau de difficulté : "+level ;
     document.querySelector("#clavier").style.display="grid";
     document.querySelector("#reset").style.display="block";
 
@@ -104,7 +115,12 @@ async function gameplay(lettre){
                  });
             }
         }
-        else{
+        else{ //lettre fausse
+            document.querySelector("#"+lettre).classList.add("mauvais") ;  
+            document.querySelector("#"+lettre).style.color = "rgb(54, 54, 54)";
+            document.querySelector(penduOrdre[erreurs]).style.display = "block";
+            document.querySelector(penduOrdre[erreurs]).style.stroke = "white";
+            erreurs++;
             if (dico['perdu']){ //fin du jeu, perdu 
                 document.querySelector(".modal-wrapper-lose").style.display = "block";
                 document.querySelector("#lastmsg").textContent = "Vous avez perdu, le mot que vous cherchiez est "+dico['motActuel'];
@@ -114,13 +130,13 @@ async function gameplay(lettre){
                     enJeu=false;
                     });
             }
-            else{ //lettre fausse
+            /*else{ //lettre fausse
                 document.querySelector("#"+lettre).classList.add("mauvais") ;  
                 document.querySelector("#"+lettre).style.color = "rgb(54, 54, 54)";
                 document.querySelector(penduOrdre[erreurs]).style.display = "block";
                 document.querySelector(penduOrdre[erreurs]).style.stroke = "white";
                 erreurs++;
-            }
+            }*/
 
         }
     }
@@ -128,7 +144,7 @@ async function gameplay(lettre){
 
 
 function serve(){ //appelle au server pour obtenir un mot
-    return fetch("http://localhost:8000/api/newGame?minLetters=4&maxLetters=6")
+    return fetch("http://localhost:8000/api/newGame?level="+level)
     .then(async function(response) {
         if (response.ok){
             const rep = await response.text();
