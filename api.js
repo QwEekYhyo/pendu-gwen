@@ -74,7 +74,7 @@ function manageRequest(request, response) {
     if (minLetters>maxLetters){
         response.end("Veuillez prendre un maxLetters>minLetters");
     }
-    
+
     else{
         for (let i=minLetters ; i<=maxLetters ; i++){
             listeFinale = listeFinale.concat(motsListe[i]);
@@ -135,14 +135,13 @@ function manageRequest(request, response) {
                 defaite=true;
                 motEnCours=mot;
             }
-            else{ // mauvaise lettre
+            else{ // mauvaise lettre pas déjà utilisé
                 nberreurs++;
             }
             lettreDejaUtilise.push(lettre); 
-            
         }
-        else{
-            lettreMauvaise = true;
+        else{ // La lettre est déjà utilisé
+            lettreMauvaise = true; // <=== Lettre est déjà utilisé
         }
 
 
