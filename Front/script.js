@@ -1,11 +1,9 @@
 // Mes variables
 var erreurs = 0; //nombres d'erreurs 
-var mot = "";   //mot a découvrir
 var motActuel=[];  //Mot en cours (avec des lettres cacher)
 const penduOrdre = ["#base" , "#barreVerti","#barreHori","#barreCote","#corde","#tete","#corps","#brasDroit","#brasGauche","#jambeDroite","#jambeGauche"]; //ordre dans laqurl il faut affiché le pendu
 let enJeu = false;  //variable qui nous emepche de jouer si il n'y a pas de mot
-let lettreUtilise=[];  //lettre déjà utilisé (on a pas le droit de les reprendre)
-let level = "Facile";
+let level = "Facile";  // Le niveau que le joueur à sélectionner (initialement à facile)
 
 
 
@@ -24,8 +22,11 @@ for (let i = 0 ; i <=25 ; i++){
     document.querySelector("#"+String.fromCharCode(65+i)).addEventListener("click",() => gameplay(String.fromCharCode(65+i)));
 }
 document.addEventListener('keyup', (event) => {
-        //console.log(event.key.toUpperCase());
-        gameplay(event.key.toUpperCase());
+        console.log(event.key.toUpperCase());
+        console.log(event.key.toUpperCase().charCodeAt(0));
+        if (event.key.toUpperCase().charCodeAt(0)>=65&&event.key.toUpperCase().charCodeAt(0)<=90){
+            gameplay(event.key.toUpperCase());
+        }
 })
 document.querySelector("#resetbtn").addEventListener("click",newGame);
 
@@ -37,8 +38,6 @@ async function newGame(){
     document.querySelector(".modal-wrapper").style.display = "none"; //cacher les pages de fin
     document.querySelector(".modal-wrapper-lose").style.display = "none";
 
-    lettreUtilise=[];
-    mot = "";
     motActuel = [];
     enJeu = false; //attendre que le mot soit affiché avant de pouvoir jouer
     document.querySelector("#mot").textContent = "Veuillez patientez svp";  //message en attendant le mot
@@ -71,15 +70,13 @@ async function newGame(){
 
     // -------- Mot généré avec le serveur --------
     rep = await serve();  // lance api/newGame
-    //taillemot = rep.toUpperCase();
-    //console.log(mot);
-    enJeu=true; //Commencer à jouer quand quand le mot est affiché
+    enJeu=true; //Commencer à jouer quand quand le mot est affiché 
     
     var i =0;
     while (i<rep){
         motActuel.push("_");
         i++;
-    }
+    } // Le bon nombre de _ s'affiche en fonction du mot qu'on doit deviner
     document.querySelector("#mot").textContent = "Mot à découvrir : "+motActuel.join("");
 
 }
@@ -87,11 +84,8 @@ async function newGame(){
 
 
 async function gameplay(lettre){
-    // Si on est pas en Jeu (mot en train de charger ou dans un page de fin) rien ne se passe
-    //console.log("la lettre Evenetlist :",lettre);
     rep = await serveTesterLettre(lettre);
     dico = JSON.parse(rep);
-    //console.log(dico['lettreUtilise']);
 
     if (enJeu){
         if (dico['lettreUtilise']){ //Affiche une page "lettre déjà utilisée" ,attend d'avoir appuyé sur "Compris" pour continuer
@@ -130,25 +124,16 @@ async function gameplay(lettre){
                     enJeu=false;
                     });
             }
-            /*else{ //lettre fausse
-                document.querySelector("#"+lettre).classList.add("mauvais") ;  
-                document.querySelector("#"+lettre).style.color = "rgb(54, 54, 54)";
-                document.querySelector(penduOrdre[erreurs]).style.display = "block";
-                document.querySelector(penduOrdre[erreurs]).style.stroke = "white";
-                erreurs++;
-            }*/
-
         }
     }
 }
 
 
-function serve(){ //appelle au server pour obtenir un mot
+function serve(){ //appelle au server pour lancer une nouvelle partie
     return fetch("http://localhost:8000/api/newGame?level="+level)
     .then(async function(response) {
         if (response.ok){
             const rep = await response.text();
-            //console.log(rep);
             return rep;
         }
         else{
@@ -157,16 +142,15 @@ function serve(){ //appelle au server pour obtenir un mot
     })
 }
 
-function serveTesterLettre(lettre){ //appelle au server pour obtenir un mot
+function serveTesterLettre(lettre){ //appelle au server pour tester une lettre
     return fetch("http://localhost:8000/api/testLetter?letter="+lettre)
     .then(async function(response) {
         if (response.ok){
             const rep = await response.text();
-            //console.log(rep,"le JSON de la lettre");
             return rep;
         }
         else{
-            return serve();
+            return serveTesterLettre();
         }
     })
 }

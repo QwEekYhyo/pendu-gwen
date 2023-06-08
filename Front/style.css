@@ -53,6 +53,9 @@ h1{
 
 #niveauDifficultes{
     font-size: large;
+    width: 100px;
+    border-radius: 5px;
+    background: #d1d1d1;
 }
 
 

@@ -1,15 +1,15 @@
-let motsListe = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+let motsListe = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]; // Liste de mot ranger par leur taille, sans la première sous-liste il y aura les mots de 1 lettre, dans la 2eme ceux de 2 lettres, etc..
 const fs = require("fs");
 
 fs.readFile("lesMiserables.txt",function(error,data){
     if(error == null){
-        let motsLivre = data.toString().split(/[(\r?\n),. ]/);
-        for( let mot of motsLivre ){
-            for ( let n =1; n<=15 ; n++){
+        let motsLivre = data.toString().split(/[(\r?\n),. ]/); // on sépare tous les mots du livre
+        for( let mot of motsLivre ){ // on parcours tous les mots
+            for ( let n =1; n<=15 ; n++){ // on les trie pour les mettre dans la bonne case du tableau
                 if(mot.length==n){
                     let valid =true;
                     for (let i = 0; i< mot.length ; i++){
-                        if(mot.charCodeAt(i)<97||mot.charCodeAt(i)>122){
+                        if(mot.charCodeAt(i)<97||mot.charCodeAt(i)>122){ // On vérifie qu'il n'y ait que des minuscules, sans accents ni tirés
                             valid=false;
                         }
                     }
@@ -27,19 +27,18 @@ fs.readFile("lesMiserables.txt",function(error,data){
 var nberreurs = 0; //nombres d'nberreurs 
 var mot = "";   //mot a découvrir
 var motEnCours=[];  //Mot en cours (avec des lettres cacher)
-let lettreDejaUtilise=[];
+let lettreDejaUtilise=[]; // Liste des lettres déjà utilisées
 let victoire = false;
 let defaite =false;
-let lettreMauvaise = false; // la lettre est pas valide (on l'a déjà utilisé)
-let lettreDansLeMot = false;
+let lettreMauvaise = false; // la lettre n'est pas valide (on l'a déjà utilisée)
+let lettreDansLeMot = false; // La lettre est dans le mot
 
 
 
 function manageRequest(request, response) {
     const etoile = request.url.split("?")[0].split("/")[2];
     
-    /*
-    // Partie quand le min et max etait dans l'url :
+    /* Partie quand le min et max etait dans l'url :
     const parametres = request.url.split("?")[1].split("&");
     for(const argument of parametres){
         argumentCoupe = argument.split("=");
@@ -51,8 +50,6 @@ function manageRequest(request, response) {
             maxLetters=parseInt(argumentCoupe[1]);
         }
     } */
-    
-    //console.log(minLetters,maxLetters);
 
     const parametres = request.url.split("?")[1];
     argumentCoupe = parametres.split("=");
@@ -77,18 +74,16 @@ function manageRequest(request, response) {
     if (minLetters>maxLetters){
         response.end("Veuillez prendre un maxLetters>minLetters");
     }
+    
     else{
         for (let i=minLetters ; i<=maxLetters ; i++){
             listeFinale = listeFinale.concat(motsListe[i]);
         }
-        //console.log(listeFinale);
     }
     
     if (etoile=="getWord"){
         const random = Math.floor(Math.random()*listeFinale.length);
-        response.end(listeFinale[random]);
-        //console.log("dans getword",motsListe[random]);
-        
+        response.end(listeFinale[random]);        
     }
     else if (etoile=="newGame"){
         const random = Math.floor(Math.random()*listeFinale.length);
